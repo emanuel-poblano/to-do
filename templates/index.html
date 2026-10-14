@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>To-do list</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <main class="todo-card">
+      <header>
+        <p class="eyebrow">A little more focus</p>
+        <h1>To-do list</h1>
+        <p class="intro">Capture what matters. Take it one task at a time.</p>
+      </header>
+
+      <form class="add-form" method="post">
+        <label class="visually-hidden" for="title">New task</label>
+        <input id="title" name="title" type="text" maxlength="200"
+               placeholder="What needs doing?" required autofocus>
+        <button type="submit">Add task</button>
+      </form>
+
+      {% if tasks %}
+        <ul class="task-list">
+          {% for task in tasks %}
+            <li class="task{% if task.completed %} completed{% endif %}">
+              <form method="post" action="{{ url_for('toggle_task', task_id=task.id) }}">
+                <button class="check-button" type="submit"
+                        aria-label="{% if task.completed %}Mark {{ task.title }} as incomplete{% else %}Complete {{ task.title }}{% endif %}">
+                  {% if task.completed %}✓{% endif %}
+                </button>
+              </form>
+              <span class="task-title">{{ task.title }}</span>
+              <form method="post" action="{{ url_for('delete_task', task_id=task.id) }}">
+                <button class="delete-button" type="submit"
+                        aria-label="Delete {{ task.title }}">×</button>
+              </form>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="empty-state">No tasks yet. Add one above to get started.</p>
+      {% endif %}
+
+      <footer>{{ tasks|length }} task{% if tasks|length != 1 %}s{% endif %}</footer>
+    </main>
+  </body>
+</html>
